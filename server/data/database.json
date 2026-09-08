@@ -1,0 +1,172 @@
+{
+  "users": [
+    {
+      "id": "demo-user-123",
+      "email": "akundemo@rezekiq.id",
+      "password": "$2b$10$wWjZn.IiPj9ni97wULiZfehUgh8Pb4MDf7i2rvpPHrqx9CW.b749.",
+      "name": "Akun Demo",
+      "gender": "Laki-laki",
+      "phoneNumber": "08123456789",
+      "createdAt": "2026-09-08T03:10:27.694Z",
+      "updatedAt": "2026-09-08T03:10:27.694Z"
+    },
+    {
+      "id": "user-1788837333661-oy4bzq",
+      "email": "testuser_1788837329014@rezekiq.id",
+      "password": "$2b$10$ytG3ZJe4RoFJQuDy6gLAjeDhUxrVciPf/3fvsd17J1JZs35C9tASa",
+      "name": "Ahmad Pengguna Uji",
+      "gender": "Laki-laki",
+      "phoneNumber": "081298765432",
+      "createdAt": "2026-09-08T03:15:33.661Z",
+      "updatedAt": "2026-09-08T03:15:33.661Z"
+    },
+    {
+      "id": "user-1788838807872-ol9k0z",
+      "email": "masjon123@gmail.com",
+      "password": "$2b$10$gq3ZAawc4f3e37vOoCNWZeAGcX5m4o9MMUkvIfotI8uzze1BNxvpu",
+      "name": "mas jon",
+      "gender": "Laki-laki",
+      "phoneNumber": "089932211",
+      "createdAt": "2026-09-08T03:40:07.872Z",
+      "updatedAt": "2026-09-08T03:40:07.872Z"
+    }
+  ],
+  "userData": {
+    "demo-user-123": {
+      "amalLog": {
+        "2026-09-08": {
+          "syukur-1": true,
+          "syukur-2": true,
+          "usaha-1": true
+        }
+      },
+      "journal": [
+        {
+          "id": "j1",
+          "date": "2026-09-08",
+          "content": "Alhamdulillah hari ini mendapatkan kabar baik."
+        }
+      ],
+      "customAmalan": [],
+      "theme": "light",
+      "user": {
+        "id": "demo-user-123",
+        "name": "Akun Demo",
+        "email": "akundemo@rezekiq.id",
+        "niat": "Mencari ridha Allah dan keberkahan dalam rezeki.",
+        "phoneNumber": "08123456789",
+        "gender": "Laki-laki",
+        "spiritualGoal": "Istiqomah membaca Al-Waqiah dan dhuha setiap pagi",
+        "preferredRecitation": "Surah Al-Waqiah",
+        "avatar": "",
+        "language": "id",
+        "earnedRewards": [
+          "syukur_completion",
+          "first_journal"
+        ],
+        "notificationSettings": {
+          "enabled": false,
+          "time": "17:00"
+        },
+        "challenges": [],
+        "soundEffectsEnabled": true,
+        "selectedAmalanIds": []
+      },
+      "updatedAt": "2026-09-08T03:10:27.694Z"
+    },
+    "user-1788837333661-oy4bzq": {
+      "amalLog": {
+        "2026-09-08": {
+          "syukur-1": true,
+          "syukur-2": true,
+          "syukur-3": true,
+          "usaha-1": true
+        }
+      },
+      "journal": [
+        {
+          "id": "test-j-1",
+          "date": "2026-09-08",
+          "content": "Catatan rasa syukur pertama di cloud."
+        },
+        {
+          "id": "test-j-2",
+          "date": "2026-09-08",
+          "content": "Catatan progres kedua berhasil diunggah."
+        }
+      ],
+      "customAmalan": [
+        {
+          "id": "custom-amal-1",
+          "name": "Sedekah Subuh Rp 10.000",
+          "gateId": "sedekah"
+        }
+      ],
+      "theme": "light",
+      "user": {
+        "id": "user-1788837333661-oy4bzq",
+        "name": "Ahmad Pengguna Uji",
+        "email": "testuser_1788837329014@rezekiq.id",
+        "niat": "Mencapai target kemandirian finansial penuh berkah",
+        "phoneNumber": "081298765432",
+        "gender": "Laki-laki",
+        "spiritualGoal": "",
+        "preferredRecitation": "",
+        "avatar": "",
+        "language": "id",
+        "earnedRewards": [],
+        "notificationSettings": {
+          "enabled": false,
+          "time": "17:00"
+        },
+        "challenges": [],
+        "soundEffectsEnabled": true,
+        "selectedAmalanIds": []
+      },
+      "updatedAt": "2026-09-08T03:15:33.899Z"
+    },
+    "user-1788838807872-ol9k0z": {
+      "amalLog": {
+        "2026-09-08": {
+          "syukur1": true,
+          "syukur2": true,
+          "syukur3": true,
+          "syukur4": true,
+          "usaha2": true,
+          "usaha1": true
+        }
+      },
+      "journal": [],
+      "customAmalan": [],
+      "theme": "light",
+      "user": {
+        "id": "user-1788838807872-ol9k0z",
+        "name": "mas jon",
+        "email": "masjon123@gmail.com",
+        "niat": "Mencari ridha Allah dan keberkahan dalam rezeki.",
+        "phoneNumber": "089932211",
+        "gender": "Laki-laki",
+        "spiritualGoal": "",
+        "preferredRecitation": "",
+        "avatar": "",
+        "language": "id",
+        "earnedRewards": [
+          "complete_syukur_day"
+        ],
+        "notificationSettings": {
+          "enabled": false,
+          "time": "17:00"
+        },
+        "challenges": [],
+        "soundEffectsEnabled": true,
+        "selectedAmalanIds": []
+      },
+      "updatedAt": "2026-09-08T03:40:51.321Z"
+    }
+  },
+  "meta": {
+    "version": "1.0.0",
+    "createdAt": "2026-09-08T03:10:27.575Z",
+    "lastUpdated": "2026-09-08T03:40:51.321Z"
+  }
+}
