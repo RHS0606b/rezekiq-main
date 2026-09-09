@@ -1,5 +1,5 @@
 // Automated Test Script for RezekiQ Cloud Backend API
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://127.0.0.1:5000';
 
 async function runTests() {
   console.log('🧪 Starting RezekiQ Backend Tests...\n');

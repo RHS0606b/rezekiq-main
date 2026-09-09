@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+import { UserModel } from './models/User.js';
+import { UserDataModel } from './models/UserData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,15 +12,15 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'database.json');
 
-// Ensure data directory exists
+// Ensure data directory exists for local fallback
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Initial Database Structure
+// Initial Database Structure for JSON fallback
 const initialDb = {
   users: [],
-  userData: {}, // Keyed by userId: { amalLog, journal, customAmalan, user, theme, updatedAt }
+  userData: {},
   meta: {
     version: '1.0.0',
     createdAt: new Date().toISOString(),
@@ -27,10 +30,16 @@ const initialDb = {
 
 class Database {
   constructor() {
-    this.init();
+    this.isMongoConnected = false;
+    this.initLocal();
   }
 
-  init() {
+  // Check if MongoDB is currently available
+  isCloudDb() {
+    return this.isMongoConnected && mongoose.connection.readyState === 1;
+  }
+
+  initLocal() {
     if (!fs.existsSync(DB_FILE)) {
       this.writeDb(initialDb);
       this.seedDemoUser();
@@ -58,7 +67,6 @@ class Database {
       fs.renameSync(tempFile, DB_FILE);
     } catch (err) {
       console.error('Error writing database file:', err);
-      throw err;
     }
   }
 
@@ -84,7 +92,6 @@ class Database {
 
       db.users.push(demoUser);
 
-      // Seed progress for demo
       const today = new Date().toISOString().slice(0, 10);
       db.userData[demoId] = {
         amalLog: {
@@ -127,19 +134,28 @@ class Database {
   }
 
   // Users
-  getUserByEmail(email) {
+  async getUserByEmail(email) {
+    const normalizedEmail = (email || '').toLowerCase().trim();
+    if (this.isCloudDb()) {
+      const doc = await UserModel.findOne({ email: normalizedEmail }).lean();
+      return doc || null;
+    }
     const db = this.readDb();
-    return db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    return db.users.find(u => u.email.toLowerCase() === normalizedEmail) || null;
   }
 
-  getUserById(id) {
+  async getUserById(id) {
+    if (this.isCloudDb()) {
+      const doc = await UserModel.findOne({ id }).lean();
+      return doc || null;
+    }
     const db = this.readDb();
-    return db.users.find(u => u.id === id);
+    return db.users.find(u => u.id === id) || null;
   }
 
   async createUser({ email, password, name, gender, phoneNumber }) {
-    const db = this.readDb();
-    if (this.getUserByEmail(email)) {
+    const existing = await this.getUserByEmail(email);
+    if (existing) {
       throw new Error('Email sudah terdaftar di sistem cloud');
     }
 
@@ -157,10 +173,8 @@ class Database {
       updatedAt: new Date().toISOString()
     };
 
-    db.users.push(newUser);
-
-    // Initialize blank cloud data for user
-    db.userData[newUser.id] = {
+    const initialUserData = {
+      userId: newUser.id,
       amalLog: {},
       journal: [],
       customAmalan: [],
@@ -188,10 +202,18 @@ class Database {
       updatedAt: new Date().toISOString()
     };
 
-    this.writeDb(db);
+    if (this.isCloudDb()) {
+      await UserModel.create(newUser);
+      await UserDataModel.create(initialUserData);
+    } else {
+      const db = this.readDb();
+      db.users.push(newUser);
+      db.userData[newUser.id] = initialUserData;
+      this.writeDb(db);
+    }
 
     const { password: _, ...safeUser } = newUser;
-    return { user: safeUser, data: db.userData[newUser.id] };
+    return { user: safeUser, data: initialUserData };
   }
 
   async verifyPassword(plainPassword, hashedPassword) {
@@ -199,16 +221,33 @@ class Database {
   }
 
   // User Data Sync
-  getUserData(userId) {
+  async getUserData(userId) {
+    if (this.isCloudDb()) {
+      const doc = await UserDataModel.findOne({ userId }).lean();
+      return doc || null;
+    }
     const db = this.readDb();
     return db.userData[userId] || null;
   }
 
-  setUserData(userId, payload) {
+  async setUserData(userId, payload) {
+    if (this.isCloudDb()) {
+      const updated = await UserDataModel.findOneAndUpdate(
+        { userId },
+        {
+          $set: {
+            ...payload,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true, upsert: true }
+      ).lean();
+      return updated;
+    }
+
     const db = this.readDb();
     const existing = db.userData[userId] || {};
 
-    // Merge or replace
     db.userData[userId] = {
       ...existing,
       ...payload,

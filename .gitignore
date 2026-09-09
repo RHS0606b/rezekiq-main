@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment & Server Data
+.env
+server/data/*.json
+!server/data/.gitkeep

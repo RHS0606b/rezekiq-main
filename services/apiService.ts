@@ -10,6 +10,8 @@ export interface UserDataPayload {
 
 const TOKEN_KEY = 'rezekiq_auth_token';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
 class ApiService {
   private token: string | null = null;
 
@@ -50,7 +52,8 @@ class ApiService {
     const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for resilient local-first
 
     try {
-      const response = await fetch(endpoint, {
+      const fullUrl = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+      const response = await fetch(fullUrl, {
         ...options,
         headers,
         signal: controller.signal

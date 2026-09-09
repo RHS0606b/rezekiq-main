@@ -5,9 +5,9 @@ import { authMiddleware } from '../middleware/auth.js';
 const router = express.Router();
 
 // GET /api/user/sync - Get latest cloud data for authenticated user
-router.get('/sync', authMiddleware, (req, res) => {
+router.get('/sync', authMiddleware, async (req, res) => {
   try {
-    const data = db.getUserData(req.userId);
+    const data = await db.getUserData(req.userId);
     if (!data) {
       return res.status(404).json({ error: 'Data progres pengguna belum ditemukan di cloud.' });
     }
@@ -24,7 +24,7 @@ router.get('/sync', authMiddleware, (req, res) => {
 });
 
 // POST /api/user/sync - Push/save progress data to cloud
-router.post('/sync', authMiddleware, (req, res) => {
+router.post('/sync', authMiddleware, async (req, res) => {
   try {
     const { amalLog, journal, customAmalan, user, theme } = req.body;
 
@@ -32,7 +32,7 @@ router.post('/sync', authMiddleware, (req, res) => {
       return res.status(400).json({ error: 'Payload data tidak valid.' });
     }
 
-    const currentCloudData = db.getUserData(req.userId) || {};
+    const currentCloudData = (await db.getUserData(req.userId)) || {};
 
     // Smart merge strategy:
     // 1. amalLog: merge dates
@@ -91,7 +91,7 @@ router.post('/sync', authMiddleware, (req, res) => {
       theme: theme || currentCloudData.theme || 'light'
     };
 
-    const savedData = db.setUserData(req.userId, payloadToSave);
+    const savedData = await db.setUserData(req.userId, payloadToSave);
 
     return res.json({
       success: true,
@@ -106,10 +106,10 @@ router.post('/sync', authMiddleware, (req, res) => {
 });
 
 // POST /api/user/backup - Create or download backup snapshot
-router.get('/backup', authMiddleware, (req, res) => {
+router.get('/backup', authMiddleware, async (req, res) => {
   try {
-    const data = db.getUserData(req.userId);
-    const user = db.getUserById(req.userId);
+    const data = await db.getUserData(req.userId);
+    const user = await db.getUserById(req.userId);
     const { password: _, ...safeUser } = user || {};
 
     return res.json({

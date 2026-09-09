@@ -42,10 +42,10 @@ router.post('/register', async (req, res) => {
           selectedAmalanIds: initialData.user?.selectedAmalanIds || data.user.selectedAmalanIds
         }
       };
-      db.setUserData(user.id, mergedData);
+      await db.setUserData(user.id, mergedData);
     }
 
-    const finalData = db.getUserData(user.id);
+    const finalData = await db.getUserData(user.id);
     const token = generateToken(user);
 
     return res.status(201).json({
@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email dan password harus diisi.' });
     }
 
-    const user = db.getUserByEmail(email);
+    const user = await db.getUserByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Email atau password salah.' });
     }
@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
 
     const { password: _, ...safeUser } = user;
     const token = generateToken(safeUser);
-    const data = db.getUserData(user.id);
+    const data = await db.getUserData(user.id);
 
     return res.json({
       message: 'Login berhasil! Selamat datang kembali.',
@@ -96,15 +96,15 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/auth/me
-router.get('/me', authMiddleware, (req, res) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const user = db.getUserById(req.userId);
+    const user = await db.getUserById(req.userId);
     if (!user) {
       return res.status(404).json({ error: 'Pengguna tidak ditemukan di sistem cloud.' });
     }
 
     const { password: _, ...safeUser } = user;
-    const data = db.getUserData(user.id);
+    const data = await db.getUserData(user.id);
 
     return res.json({
       user: safeUser,

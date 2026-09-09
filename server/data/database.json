@@ -29,6 +29,16 @@
       "phoneNumber": "089932211",
       "createdAt": "2026-09-08T03:40:07.872Z",
       "updatedAt": "2026-09-08T03:40:07.872Z"
+    },
+    {
+      "id": "user-1788924481102-cq5uol",
+      "email": "testuser_1788924479916@rezekiq.id",
+      "password": "$2b$10$nXMnoHuS7FWIl4eF4DPcU.zdIHa5utvQFRtN9ntltAiFKM5TcvlLa",
+      "name": "Ahmad Pengguna Uji",
+      "gender": "Laki-laki",
+      "phoneNumber": "081298765432",
+      "createdAt": "2026-09-09T03:28:01.102Z",
+      "updatedAt": "2026-09-09T03:28:01.102Z"
     }
   ],
   "userData": {
@@ -162,11 +172,63 @@
         "selectedAmalanIds": []
       },
       "updatedAt": "2026-09-08T03:40:51.321Z"
+    },
+    "user-1788924481102-cq5uol": {
+      "userId": "user-1788924481102-cq5uol",
+      "amalLog": {
+        "2026-09-08": {
+          "syukur-1": true,
+          "syukur-2": true,
+          "syukur-3": true,
+          "usaha-1": true
+        }
+      },
+      "journal": [
+        {
+          "id": "test-j-1",
+          "date": "2026-09-08",
+          "content": "Catatan rasa syukur pertama di cloud."
+        },
+        {
+          "id": "test-j-2",
+          "date": "2026-09-08",
+          "content": "Catatan progres kedua berhasil diunggah."
+        }
+      ],
+      "customAmalan": [
+        {
+          "id": "custom-amal-1",
+          "name": "Sedekah Subuh Rp 10.000",
+          "gateId": "sedekah"
+        }
+      ],
+      "theme": "light",
+      "user": {
+        "id": "user-1788924481102-cq5uol",
+        "name": "Ahmad Pengguna Uji",
+        "email": "testuser_1788924479916@rezekiq.id",
+        "niat": "Mencapai target kemandirian finansial penuh berkah",
+        "phoneNumber": "081298765432",
+        "gender": "Laki-laki",
+        "spiritualGoal": "",
+        "preferredRecitation": "",
+        "avatar": "",
+        "language": "id",
+        "earnedRewards": [],
+        "notificationSettings": {
+          "enabled": false,
+          "time": "17:00"
+        },
+        "challenges": [],
+        "soundEffectsEnabled": true,
+        "selectedAmalanIds": []
+      },
+      "updatedAt": "2026-09-09T03:28:01.481Z"
     }
   },
   "meta": {
     "version": "1.0.0",
     "createdAt": "2026-09-08T03:10:27.575Z",
-    "lastUpdated": "2026-09-08T03:40:51.321Z"
+    "lastUpdated": "2026-09-09T03:28:01.481Z"
   }
 }
