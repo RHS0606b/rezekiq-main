@@ -311,7 +311,7 @@ function App() {
       <Route path="/profile" element={<AuthenticatedLayout><ProfileView user={data.user} updateUser={data.updateUser} /></AuthenticatedLayout>} />
       <Route path="/rewards" element={<AuthenticatedLayout><RewardsView rewardsWithProgress={rewardsWithProgress} user={data.user} /></AuthenticatedLayout>} />
       <Route path="/tantangan" element={<AuthenticatedLayout><ChallengesView allChallenges={data.allChallenges} user={data.user} startChallenge={handleStartChallenge} cancelChallenge={data.cancelChallenge} allRewards={data.allRewards} rizqGates={data.rizqGates} /></AuthenticatedLayout>} />
-      <Route path="/pengaturan" element={<AuthenticatedLayout><SettingsView user={data.user} updateUser={data.updateUser} theme={data.theme} toggleTheme={data.toggleTheme} syncStatus={data.syncStatus} lastSyncedAt={data.lastSyncedAt} syncWithCloud={data.syncWithCloud} /></AuthenticatedLayout>} />
+      <Route path="/pengaturan" element={<AuthenticatedLayout><SettingsView user={data.user} updateUser={data.updateUser} theme={data.theme} toggleTheme={data.toggleTheme} syncStatus={data.syncStatus} lastSyncedAt={data.lastSyncedAt} syncWithCloud={data.syncWithCloud} deleteAccount={data.deleteAccount} /></AuthenticatedLayout>} />
       
       <Route path="/syukur" element={<AuthenticatedLayout><GateRoute gateId="syukur" /></AuthenticatedLayout>} />
       <Route path="/usaha-ikhtiar" element={<AuthenticatedLayout><GateRoute gateId="usaha" /></AuthenticatedLayout>} />

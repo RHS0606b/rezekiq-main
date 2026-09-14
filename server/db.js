@@ -257,6 +257,22 @@ class Database {
     this.writeDb(db);
     return db.userData[userId];
   }
+
+  async deleteUser(userId) {
+    if (this.isCloudDb()) {
+      await UserModel.deleteOne({ id: userId });
+      await UserDataModel.deleteOne({ userId });
+      return true;
+    }
+
+    const db = this.readDb();
+    db.users = db.users.filter(u => u.id !== userId);
+    if (db.userData[userId]) {
+      delete db.userData[userId];
+    }
+    this.writeDb(db);
+    return true;
+  }
 }
 
 export const db = new Database();

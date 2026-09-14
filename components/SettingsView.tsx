@@ -12,6 +12,7 @@ interface SettingsViewProps {
   syncStatus?: 'idle' | 'syncing' | 'synced' | 'offline' | 'error';
   lastSyncedAt?: string | null;
   syncWithCloud?: () => Promise<any>;
+  deleteAccount?: () => Promise<void>;
 }
 
 const ToggleSwitch: React.FC<{ checked: boolean; onChange: (checked: boolean) => void }> = ({ checked, onChange }) => {
@@ -28,7 +29,7 @@ const ToggleSwitch: React.FC<{ checked: boolean; onChange: (checked: boolean) =>
 
 export const SettingsView: React.FC<SettingsViewProps> = ({ 
   user, updateUser, theme, toggleTheme,
-  syncStatus = 'idle', lastSyncedAt, syncWithCloud 
+  syncStatus = 'idle', lastSyncedAt, syncWithCloud, deleteAccount 
 }) => {
   const language = user?.language || 'id';
   const t = translations[language];
@@ -36,6 +37,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (!deleteAccount) return;
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      showToast(t.deleteAccountSuccess, 'success');
+      setShowDeleteModal(false);
+    } catch {
+      showToast(t.deleteAccountFailed, 'error');
+      setIsDeleting(false);
+    }
+  };
 
   const handleManualSync = async () => {
     if (!syncWithCloud) return;
@@ -302,7 +318,94 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </div>
             </div>
         </div>
+
+        {/* Danger Zone: Delete Account */}
+        <div className="bg-rose-50/40 dark:bg-rose-950/10 backdrop-blur-xl rounded-[40px] border border-rose-200/60 dark:border-rose-900/40 shadow-sm overflow-hidden">
+            <div className="p-8 space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-6">
+                        <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-[22px] flex items-center justify-center flex-shrink-0">
+                            <Icon size={24}>
+                                <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </Icon>
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h4 className="font-black text-rose-700 dark:text-rose-400 uppercase tracking-tight">{t.dangerZoneTitle}</h4>
+                                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300">
+                                    Permanen
+                                </span>
+                            </div>
+                            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-1">{t.deleteAccountDesc}</p>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => setShowDeleteModal(true)}
+                        className="flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-rose-200 dark:shadow-none whitespace-nowrap"
+                    >
+                        <Icon size={16}>
+                            <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </Icon>
+                        {t.deleteAccountBtn}
+                    </button>
+                </div>
+            </div>
+        </div>
       </div>
+
+      {/* Modal Konfirmasi Hapus Akun */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-900 rounded-[36px] p-6 md:p-8 max-w-md w-full shadow-2xl border border-gray-100 dark:border-gray-800 space-y-6 text-center"
+            >
+              <div className="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-3xl mx-auto flex items-center justify-center text-3xl">
+                ⚠️
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                  {t.deleteAccountModalTitle}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
+                  {t.deleteAccountModalDesc}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={isDeleting}
+                  className="flex-1 py-3.5 px-5 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold text-xs uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                >
+                  {t.deleteAccountCancel}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="flex-1 py-3.5 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-200 dark:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isDeleting ? 'Menghapus...' : t.deleteAccountConfirmBtn}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

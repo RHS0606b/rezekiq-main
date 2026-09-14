@@ -115,4 +115,15 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// DELETE /api/auth/delete-account
+router.delete('/delete-account', authMiddleware, async (req, res) => {
+  try {
+    await db.deleteUser(req.userId);
+    return res.json({ success: true, message: 'Akun dan semua data terkait berhasil dihapus permanen.' });
+  } catch (err) {
+    console.error('Delete account error:', err);
+    return res.status(500).json({ error: 'Gagal menghapus akun dari server cloud.' });
+  }
+});
+
 export default router;

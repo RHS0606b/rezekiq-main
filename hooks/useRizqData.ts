@@ -422,6 +422,34 @@ export const useRizqData = () => {
     setSyncStatus('idle');
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    if (!currentUserId) return;
+
+    // 1. Try to delete on cloud server
+    try {
+      await apiService.deleteAccount();
+    } catch (err) {
+      console.warn('Cloud delete error or offline, deleting local user data:', err);
+    }
+
+    // 2. Remove all local data for this user
+    try {
+      localStorage.removeItem(`rezekiq_data_${currentUserId}`);
+      const updatedRegistry = userRegistry.filter(u => u.id !== currentUserId);
+      setUserRegistry(updatedRegistry);
+      saveToStorage('rezekiq_user_registry', updatedRegistry);
+      saveToStorage('rezekiq_current_user_id', null);
+      localStorage.removeItem('rezekiq_auth_token');
+      localStorage.removeItem('rezekiq_last_synced_at');
+    } catch (e) {
+      console.error('Error clearing local user data:', e);
+    }
+
+    setCurrentUserId(null);
+    setUserData(null);
+    setSyncStatus('idle');
+  }, [currentUserId, userRegistry]);
+
   const syncWithCloud = useCallback(async () => {
     if (!userData || !currentUserId || currentUserId === 'guest') {
       return false;
@@ -713,7 +741,7 @@ export const useRizqData = () => {
 
   return { 
     rizqGates, amalLog, journal, theme, customAmalan, user, allRewards, allChallenges,
-    startChallenge, cancelChallenge, logout, login, register, getRewardsWithProgress, 
+    startChallenge, cancelChallenge, logout, deleteAccount, login, register, getRewardsWithProgress, 
     updateUser: setUser, addCustomAmal, editCustomAmal, deleteCustomAmal, toggleAmal, 
     isAmalCompleted, calculateStreak, calculateGateProgress, calculateOverallProgress, 
     addJournalEntry, editJournalEntry, deleteJournalEntry, toggleAmalanSelection, 

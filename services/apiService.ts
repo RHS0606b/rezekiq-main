@@ -145,6 +145,15 @@ class ApiService {
     return res.data;
   }
 
+  // Delete Account
+  public async deleteAccount(): Promise<{ success: boolean; message: string }> {
+    const res = await this.request<{ success: boolean; message: string }>('/api/auth/delete-account', {
+      method: 'DELETE'
+    });
+    this.logout();
+    return res;
+  }
+
   // Logout
   public logout() {
     this.setToken(null);

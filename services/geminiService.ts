@@ -1,10 +1,21 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const getApiKey = (): string | undefined => {
+  return (
+    (typeof process !== 'undefined' && process.env?.API_KEY) ||
+    (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) ||
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_GEMINI_API_KEY) ||
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.GEMINI_API_KEY) ||
+    (typeof window !== 'undefined' && (window as any).__GEMINI_API_KEY__) ||
+    ''
+  );
+};
+
+const API_KEY = getApiKey();
 
 if (!API_KEY) {
-  console.warn("API_KEY not found. AI features will be disabled.");
+  console.warn("API_KEY tidak ditemukan. Fitur AI membutuhkan konfigurasi GEMINI_API_KEY.");
 }
 
 const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
@@ -17,11 +28,14 @@ const SYSTEM_INSTRUCTION = `You are "Rizq Coach," a wise, empathetic, and gentle
 - Respond in the same language as the user's query (Bahasa Indonesia or English).`;
 
 export const getAIReflection = async (userMessage: string, chatHistory: {role: 'user' | 'model', content: string}[]) => {
-  if (!ai) {
-    return "AI service is not available. Please configure the API Key.";
+  const activeApiKey = getApiKey();
+
+  if (!activeApiKey) {
+    return "Afwan, fitur AI belum dapat merespons karena GEMINI_API_KEY belum disetel di Vercel Environment Variables. Silakan tambahkan GEMINI_API_KEY di dashboard Vercel Anda.";
   }
 
   try {
+    const client = ai || new GoogleGenAI({ apiKey: activeApiKey });
     const contents = [
       ...chatHistory.map(msg => ({
           role: msg.role,
@@ -30,7 +44,7 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
       { role: 'user', parts: [{ text: userMessage }] }
     ];
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: contents,
         config: {
@@ -40,9 +54,12 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
         }
     });
     
-    return response.text;
-  } catch (error) {
+    return response.text || "Alhamdulillah, semoga Allah senantiasa membuka pintu rezeki dan keberkahan untuk Anda.";
+  } catch (error: any) {
     console.error("Error fetching AI reflection:", error);
-    return "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+    if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('403')) {
+      return "Afwan, API Key Gemini tidak valid atau kuota terlampaui. Mohon periksa kembali API Key Anda di Google AI Studio.";
+    }
+    return "Afwan, sedang terjadi kendala jaringan saat menghubungkan ke AI. Silakan coba beberapa saat lagi.";
   }
 };
