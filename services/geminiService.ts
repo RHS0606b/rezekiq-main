@@ -31,35 +31,62 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
   const activeApiKey = getApiKey();
 
   if (!activeApiKey) {
-    return "Afwan, fitur AI belum dapat merespons karena GEMINI_API_KEY belum disetel di Vercel Environment Variables. Silakan tambahkan GEMINI_API_KEY di dashboard Vercel Anda.";
+    return "Afwan, fitur AI belum dapat merespons karena GEMINI_API_KEY belum disetel di Vercel Environment Variables.";
   }
 
-  try {
-    const client = ai || new GoogleGenAI({ apiKey: activeApiKey });
-    const contents = [
-      ...chatHistory.map(msg => ({
-          role: msg.role,
-          parts: [{ text: msg.content }]
-      })),
-      { role: 'user', parts: [{ text: userMessage }] }
-    ];
+  const cleanApiKey = activeApiKey.trim();
 
-    const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: contents,
-        config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.7,
-            topP: 0.9,
-        }
-    });
-    
-    return response.text || "Alhamdulillah, semoga Allah senantiasa membuka pintu rezeki dan keberkahan untuk Anda.";
-  } catch (error: any) {
-    console.error("Error fetching AI reflection:", error);
-    if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('403')) {
-      return "Afwan, API Key Gemini tidak valid atau kuota terlampaui. Mohon periksa kembali API Key Anda di Google AI Studio.";
+  // Format payload for Gemini API
+  const formattedContents = [
+    ...chatHistory.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }]
+    })),
+    { role: 'user', parts: [{ text: userMessage }] }
+  ];
+
+  const requestBody = {
+    system_instruction: {
+      parts: [{ text: SYSTEM_INSTRUCTION }]
+    },
+    contents: formattedContents,
+    generationConfig: {
+      temperature: 0.7,
+      topP: 0.9,
+      maxOutputTokens: 1000
     }
-    return "Afwan, sedang terjadi kendala jaringan saat menghubungkan ke AI. Silakan coba beberapa saat lagi.";
+  };
+
+  // Coba model gemini-1.5-flash terlebih dahulu, jika gagal fallback ke gemini-2.0-flash / gemini-2.5-flash
+  const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+
+  for (const model of candidateModels) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`;
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return data.candidates[0].content.parts[0].text;
+      }
+
+      if (data?.error?.message) {
+        console.warn(`Model ${model} returned error:`, data.error.message);
+        if (data.error.status === 'PERMISSION_DENIED' || data.error.message.includes('API_KEY_INVALID')) {
+          return "Afwan, API Key Gemini tidak valid atau belum diaktifkan. Mohon periksa kembali API Key di Google AI Studio.";
+        }
+      }
+    } catch (err) {
+      console.warn(`Fetch with model ${model} failed:`, err);
+    }
   }
+
+  return "Afwan, sedang terjadi kendala jaringan saat menghubungkan ke AI. Silakan periksa kembali API Key atau coba beberapa saat lagi.";
 };
