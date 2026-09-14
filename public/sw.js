@@ -2,8 +2,6 @@ const CACHE_NAME = 'rezekiq-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/index.css',
-  '/index.tsx',
   '/favicon.svg',
   '/manifest.json',
   'https://cdn.tailwindcss.com',
