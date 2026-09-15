@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from './icons/Icon';
 import { motion, AnimatePresence } from 'motion/react';
 import { User } from '../types';

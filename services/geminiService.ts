@@ -59,6 +59,7 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
 
   // Coba model gemini-1.5-flash terlebih dahulu, jika gagal fallback ke gemini-2.0-flash / gemini-2.5-flash
   const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+  let lastErrorMessage = '';
 
   for (const model of candidateModels) {
     try {
@@ -78,15 +79,14 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
       }
 
       if (data?.error?.message) {
+        lastErrorMessage = data.error.message;
         console.warn(`Model ${model} returned error:`, data.error.message);
-        if (data.error.status === 'PERMISSION_DENIED' || data.error.message.includes('API_KEY_INVALID')) {
-          return "Afwan, API Key Gemini tidak valid atau belum diaktifkan. Mohon periksa kembali API Key di Google AI Studio.";
-        }
       }
-    } catch (err) {
+    } catch (err: any) {
+      lastErrorMessage = err?.message || 'Network error';
       console.warn(`Fetch with model ${model} failed:`, err);
     }
   }
 
-  return "Afwan, sedang terjadi kendala jaringan saat menghubungkan ke AI. Silakan periksa kembali API Key atau coba beberapa saat lagi.";
+  return `Afwan, terjadi kendala: ${lastErrorMessage || 'Gagal menghubungi server Google Gemini. Periksa izin API Key Anda.'}`;
 };

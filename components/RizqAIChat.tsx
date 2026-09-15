@@ -43,7 +43,7 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
         
         const modelMessage: ChatMessage = { role: 'model', content: aiResponse };
         setMessages(prev => [...prev, modelMessage]);
-        playSound('receive');
+        playSound('click');
     } catch (error) {
         setMessages(prev => [...prev, { role: 'model', content: t.coachError }]);
     } finally {

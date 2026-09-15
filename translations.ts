@@ -74,7 +74,7 @@ export const translations = {
     aktivatorTerdaftar: "Aktivator Terdaftar",
     personalisasiPesan: "Personalisasi rencana amal harian Anda. Centang amalan dari 8 Pintu Rezeki yang ingin difokuskan hari ini.",
     sistemKosong: "Sistem Kosong",
-    tekanAtur: "Tekan Atur Amalan untuk memprogram rencana hari ini.",
+    tekanAtur: "Tekan {btn} untuk memprogram rencana hari ini.",
 
     // Journal View
     kisahHariIni: "Kisah Rezeki Hari Ini",
@@ -330,6 +330,9 @@ export const translations = {
     authSlogan: "Temukan Keberkahan dalam Setiap Langkah",
     footerConnect: "Hubungi Kami",
     journalEditTooltip: "Edit entri",
+    journalDeleteTooltip: "Hapus entri",
+    sidebarNav: "Navigasi",
+    sidebarSystem: "Sistem",
     landingProductTour: "Tur Produk RezekiQ v1.0",
     cloudSynced: "Tersimpan di Cloud",
     cloudSyncing: "Menyinkronkan...",
@@ -416,7 +419,7 @@ export const translations = {
     aktivatorTerdaftar: "Registered Activators",
     personalisasiPesan: "Personalize your daily deed plan. Check the deeds from the 8 doors of Rizq you want to focus on today.",
     sistemKosong: "System Empty",
-    tekanAtur: "Press Manage Deeds to program today's plan.",
+    tekanAtur: "Press {btn} to program today's plan.",
 
     // Journal View
     kisahHariIni: "Today's Rizq Story",
@@ -672,6 +675,9 @@ export const translations = {
     authSlogan: "Find Blessings in Every Step",
     footerConnect: "Connect",
     journalEditTooltip: "Edit entry",
+    journalDeleteTooltip: "Delete entry",
+    sidebarNav: "Navigation",
+    sidebarSystem: "System",
     landingProductTour: "RezekiQ Product Tour v1.0",
     cloudSynced: "Saved to Cloud",
     cloudSyncing: "Syncing...",

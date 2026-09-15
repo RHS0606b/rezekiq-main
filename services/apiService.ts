@@ -10,7 +10,7 @@ export interface UserDataPayload {
 
 const TOKEN_KEY = 'rezekiq_auth_token';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const API_BASE_URL = (((import.meta as any).env?.VITE_API_URL as string) || '').replace(/\/+$/, '');
 
 class ApiService {
   private token: string | null = null;
