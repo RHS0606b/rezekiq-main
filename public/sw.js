@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rezekiq-v2';
+const CACHE_NAME = 'rezekiq-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
+  // Biarkan browser meng-install di background tanpa menginterupsi tab aktif pengguna
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
@@ -17,6 +17,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Bersihkan cache lama dengan aman tanpa memaksa reload (tanpa clients.claim)
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -26,27 +27,31 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Hanya intercept GET request dan hindari intercept script external CDN pihak ketiga agar tidak kena CORS error
   if (event.request.method !== 'GET') return;
   
   const url = new URL(event.request.url);
+  // Hindari intercept request eksternal / CDN
   if (url.origin !== self.location.origin) {
-    // Biarkan browser handle external CDN secara native
     return;
   }
 
+  // Khusus halaman navigasi HTML, gunakan Network First agar update selalu segar tanpa auto-reload paksa
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // Aset statis lainnya menggunakan cache first
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
+      return response || fetch(event.request);
     })
   );
 });
