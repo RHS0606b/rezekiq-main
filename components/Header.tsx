@@ -94,10 +94,9 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">{isOnline ? t.systemOnline : t.connectionLost}</span>
                 </div>
                 {syncStatus !== 'idle' && (
-                  <button 
-                    onClick={() => onSync && onSync()}
-                    title={lastSyncedAt ? `${t.lastSyncedAt}: ${lastSyncedAt}` : t.cloudSyncNow}
-                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/50 text-[9px] font-black uppercase tracking-wider transition-all hover:scale-105"
+                  <div 
+                    title={lastSyncedAt ? `${t.lastSyncedAt}: ${lastSyncedAt}` : undefined}
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/50 text-[9px] font-black uppercase tracking-wider"
                   >
                     {syncStatus === 'syncing' ? (
                       <>
@@ -115,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({
                         <span className="text-gray-500 dark:text-gray-400">{t.cloudOffline}</span>
                       </>
                     )}
-                  </button>
+                  </div>
                 )}
             </div>
         </div>
@@ -147,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({
                 transition={{ duration: 0.2 }}
             >
                 {theme === 'light' ? (
-                    <Icon size={20}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Icon>
+                    <Icon size={20}><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></Icon>
                 ) : (
                     <Icon size={20}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></Icon>
                 )}
@@ -184,15 +183,6 @@ export const Header: React.FC<HeaderProps> = ({
                             <Icon size={18}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Icon>
                             <span className="text-sm font-bold">{t.profilAkunMenu}</span>
                         </button>
-                        {onSync && (
-                          <button
-                              onClick={() => { onSync(); setIsDropdownOpen(false); }}
-                              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 transition-colors"
-                          >
-                              <Icon size={18}><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></Icon>
-                              <span className="text-sm font-bold">{t.cloudSyncNow}</span>
-                          </button>
-                        )}
                         <hr className="my-1 border-gray-100 dark:border-gray-800" />
                         <button
                             onClick={() => { logout(); setIsDropdownOpen(false); }}

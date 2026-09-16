@@ -36,7 +36,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [formData, setFormData] = useState<User>(user);
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -50,19 +49,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     } catch {
       showToast(t.deleteAccountFailed, 'error');
       setIsDeleting(false);
-    }
-  };
-
-  const handleManualSync = async () => {
-    if (!syncWithCloud) return;
-    setIsSyncing(true);
-    try {
-      await syncWithCloud();
-      showToast(t.syncSuccess, 'success');
-    } catch {
-      showToast(t.syncFailed, 'error');
-    } finally {
-      setIsSyncing(false);
     }
   };
 
@@ -291,15 +277,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         </div>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleManualSync}
-                        disabled={isSyncing || syncStatus === 'syncing'}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-emerald-200 dark:shadow-none disabled:opacity-50"
-                    >
-                        <Icon size={16}><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></Icon>
-                        {isSyncing || syncStatus === 'syncing' ? t.cloudSyncing : t.cloudSyncNow}
-                    </button>
+                    <div className="flex items-center gap-2 self-start md:self-center px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/40">
+                        <span className="relative flex h-2 w-2">
+                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${syncStatus === 'syncing' ? 'bg-amber-400' : 'bg-emerald-400'} opacity-75`}></span>
+                            <span className={`relative inline-flex rounded-full h-2 w-2 ${syncStatus === 'syncing' ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                        </span>
+                        <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                            {syncStatus === 'syncing' ? t.cloudSyncing : 'Otomatis Aktif'}
+                        </span>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-gray-800">
