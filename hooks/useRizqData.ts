@@ -161,7 +161,7 @@ export const useRizqData = () => {
     return null;
   });
 
-  // On mount: Try verifying session or syncing latest cloud data if authenticated
+  // On mount: Background cloud check (silent sync) agar tidak menjeda atau flicker saat web dibuka
   useEffect(() => {
     let isMounted = true;
     const initSync = async () => {
@@ -169,17 +169,29 @@ export const useRizqData = () => {
       if (!token) return;
 
       try {
-        setSyncStatus('syncing');
+        // Jika belum ada data lokal sama sekali, baru set 'syncing'
+        if (!userData) {
+          setSyncStatus('syncing');
+        }
         const session = await apiService.getMe();
         if (!isMounted) return;
 
         if (session && session.data) {
           setUserData(prev => {
-            const merged = {
+            // Jika data lokal sudah sama persis dengan cloud, jangan trigger re-render
+            if (prev) {
+              const prevAmalLog = JSON.stringify(prev.amalLog);
+              const prevJournal = JSON.stringify(prev.journal);
+              const newAmalLog = JSON.stringify(session.data.amalLog);
+              const newJournal = JSON.stringify(session.data.journal);
+              if (prevAmalLog === newAmalLog && prevJournal === newJournal) {
+                return prev;
+              }
+            }
+            return {
               ...session.data,
               theme: globalTheme
             };
-            return merged;
           });
           if (session.user) {
             setCurrentUserId(session.user.id);

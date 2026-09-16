@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="40%" stop-color="#eab308"/>
+      <stop offset="70%" stop-color="#ca8a04"/>
+      <stop offset="100%" stop-color="#a16207"/>
+    </linearGradient>
+    <linearGradient id="archGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#ca8a04"/>
+      <stop offset="100%" stop-color="#854d0e"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background Rounded Shield -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+
+  <g filter="url(#shadow)">
+    <!-- Islamic Arch (Gerbang Rezeki) Outer & Inner -->
+    <path d="M256 55 C 345 105 385 175 385 270 L 385 395 C 385 400 380 405 375 405 L 345 405 C 340 405 335 400 335 395 L 335 275 C 335 198 305 145 256 108 C 207 145 177 198 177 275 L 177 395 C 177 400 172 405 167 405 L 137 405 C 132 405 127 400 127 395 L 127 270 C 127 175 167 105 256 55 Z" fill="url(#archGrad)"/>
+    
+    <!-- Crescent Moon inside Arch -->
+    <path d="M 276 130 A 30 30 0 1 1 254 185 A 25 25 0 1 0 276 130 Z" fill="url(#goldGrad)"/>
+
+    <!-- Stylized 'R' for RezekiQ -->
+    <path d="M 215 205 H 272 C 302 205 320 220 320 248 C 320 270 306 284 286 289 L 328 368 C 331 373 328 380 322 380 H 292 C 287 380 282 376 279 370 L 246 302 H 240 V 375 C 240 378 238 380 235 380 H 215 C 212 380 210 378 210 375 V 210 C 210 207 212 205 215 205 Z M 240 230 V 278 H 268 C 282 278 293 268 293 254 C 293 239 282 230 268 230 H 240 Z" fill="url(#goldGrad)"/>
+
+    <!-- Elegant Leaves at Base -->
+    <!-- Left Leaf -->
+    <path d="M 125 380 C 100 340 120 295 160 305 C 160 345 140 375 125 380 Z" fill="#4ade80" opacity="0.9"/>
+    <!-- Right Leaf -->
+    <path d="M 387 380 C 412 340 392 295 352 305 C 352 345 372 375 387 380 Z" fill="#4ade80" opacity="0.9"/>
+    
+    <!-- Golden Ground Line -->
+    <path d="M 110 410 Q 256 425 402 410 Q 256 438 110 410 Z" fill="url(#goldGrad)"/>
+  </g>
+</svg>
