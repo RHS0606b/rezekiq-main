@@ -57,8 +57,8 @@ export const getAIReflection = async (userMessage: string, chatHistory: {role: '
     }
   };
 
-  // Coba model terbaru gemini-2.0-flash terlebih dahulu, jika gagal fallback ke gemini-1.5-flash atau alternatif lainnya
-  const candidateModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+  // Model prioritas: gemini-3.6-flash (direkomendasikan Google untuk pengguna baru), lalu fallback ke model flash lainnya
+  const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
   let lastErrorMessage = '';
 
   for (const model of candidateModels) {
