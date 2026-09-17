@@ -93,6 +93,11 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-rose-500'} animate-pulse`}></span>
                     <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">{isOnline ? t.systemOnline : t.connectionLost}</span>
                 </div>
+                {title === t.aiCoach && (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase tracking-wider">
+                    Gemini AI Engine
+                  </span>
+                )}
                 {syncStatus !== 'idle' && (
                   <div 
                     title={lastSyncedAt ? `${t.lastSyncedAt}: ${lastSyncedAt}` : undefined}

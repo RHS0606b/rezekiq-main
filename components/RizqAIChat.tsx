@@ -319,38 +319,34 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
       {/* 2. AREA UTAMA CHAT (Lega, Bersih, Modern) */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#fafcfa] dark:bg-gray-900">
         
-        {/* Top Header Bar */}
-        <div className="px-5 py-4 bg-white/70 dark:bg-gray-900/70 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* Top Header Bar (Ringkas & Minimalis, menyatu) */}
+        <div className="px-4 py-2.5 bg-white/50 dark:bg-gray-900/50 border-b border-gray-100/80 dark:border-gray-800/60 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen(prev => !prev)}
-              className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
-              title="Toggle Sidebar"
+              className="p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors flex items-center gap-1.5 text-xs font-semibold"
+              title={isSidebarOpen ? "Tutup Riwayat" : "Buka Riwayat"}
             >
-              <Icon size={20}>
+              <Icon size={18}>
                 <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                 <path d="M9 3v18" />
               </Icon>
+              <span className="hidden sm:inline text-[11px] text-gray-400">
+                {isSidebarOpen ? 'Sembunyikan Riwayat' : 'Lihat Riwayat'}
+              </span>
             </button>
-            <div>
-              <h3 className="font-black text-gray-800 dark:text-gray-100 text-base md:text-lg tracking-tight flex items-center gap-2">
-                <span>Rizq Reflection AI</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                  3.6 Flash
-                </span>
-              </h3>
-              <p className="text-[11px] text-gray-400 font-medium">
-                {activeSession.title}
-              </p>
-            </div>
+            <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">•</span>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate max-w-[200px] sm:max-w-xs md:max-w-md">
+              {activeSession.title}
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleNewChat}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-xs font-bold text-gray-700 dark:text-gray-300 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/50 text-xs font-bold transition-all active:scale-95"
             >
-              <Icon size={14}><path d="M12 5v14m-7-7h14" /></Icon>
+              <Icon size={13}><path d="M12 5v14m-7-7h14" /></Icon>
               <span>{t.coachNewChat}</span>
             </button>
           </div>
