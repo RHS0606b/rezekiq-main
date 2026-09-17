@@ -257,12 +257,12 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
   ].filter(Boolean);
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] w-full max-w-7xl mx-auto rounded-[32px] overflow-hidden bg-white/80 dark:bg-gray-900/90 backdrop-blur-2xl border border-gray-200/80 dark:border-gray-800 shadow-2xl transition-all">
+    <div className="flex h-full w-full overflow-hidden bg-white dark:bg-gray-900 transition-all">
       
       {/* 1. SIDEBAR RIWAYAT PERCAKAPAN (Mirip Gemini / ChatGPT) */}
       <div
         className={`${
-          isSidebarOpen ? 'w-72 md:w-80' : 'w-0'
+          isSidebarOpen ? 'w-64 sm:w-72 md:w-80' : 'w-0'
         } transition-all duration-300 ease-in-out flex flex-col bg-gray-50/90 dark:bg-gray-950/70 border-r border-gray-200/70 dark:border-gray-800/80 overflow-hidden flex-shrink-0`}
       >
         <div className="p-4 border-b border-gray-200/60 dark:border-gray-800/60 flex items-center justify-between gap-2">

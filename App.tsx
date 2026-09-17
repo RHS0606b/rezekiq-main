@@ -191,7 +191,7 @@ function App() {
     data.startChallenge(challengeId);
   }
 
-  const AuthenticatedLayout = ({ children }: { children: React.ReactNode }) => (
+  const AuthenticatedLayout = ({ children, noPadding = false }: { children: React.ReactNode; noPadding?: boolean }) => (
     <div className="flex h-screen w-screen overflow-hidden" onClick={initializeAudio}>
       <Toaster position="top-center" />
       {isSidebarOpen && (
@@ -230,7 +230,7 @@ function App() {
             }
           }}
         />
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <main className={`flex-1 overflow-x-hidden ${noPadding ? 'p-0 pb-16 md:pb-0 overflow-hidden flex flex-col' : 'p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto custom-scrollbar'}`}>
           {children}
         </main>
         <BottomBar user={data.user} onMoreClick={() => setIsSidebarOpen(true)} />
@@ -307,7 +307,7 @@ function App() {
       <Route path="/rencana-hari-ini" element={<AuthenticatedLayout><TodayView {...data} toggleAmal={handleToggleAmal} rewardsWithProgress={rewardsWithProgress} /></AuthenticatedLayout>} />
       <Route path="/jurnal-rezeki" element={<AuthenticatedLayout><JournalView {...data} /></AuthenticatedLayout>} />
       <Route path="/analitik" element={<AuthenticatedLayout><AnalyticsView {...data} /></AuthenticatedLayout>} />
-      <Route path="/rizq-ai-coach" element={<AuthenticatedLayout><RizqAIChat playSound={playSound} user={data.user} /></AuthenticatedLayout>} />
+      <Route path="/rizq-ai-coach" element={<AuthenticatedLayout noPadding={true}><RizqAIChat playSound={playSound} user={data.user} /></AuthenticatedLayout>} />
       <Route path="/profile" element={<AuthenticatedLayout><ProfileView user={data.user} updateUser={data.updateUser} /></AuthenticatedLayout>} />
       <Route path="/rewards" element={<AuthenticatedLayout><RewardsView rewardsWithProgress={rewardsWithProgress} user={data.user} /></AuthenticatedLayout>} />
       <Route path="/tantangan" element={<AuthenticatedLayout><ChallengesView allChallenges={data.allChallenges} user={data.user} startChallenge={handleStartChallenge} cancelChallenge={data.cancelChallenge} allRewards={data.allRewards} rizqGates={data.rizqGates} /></AuthenticatedLayout>} />
