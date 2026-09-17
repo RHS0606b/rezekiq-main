@@ -128,6 +128,8 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingText, setEditingText] = useState<string>('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Active Session helper
@@ -229,6 +231,64 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
         prev.map(s =>
           s.id === activeSession.id
             ? { ...s, messages: [...updatedMessages, { role: 'model', content: t.coachError }] }
+            : s
+        )
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mulai Edit Pesan
+  const handleStartEdit = (index: number, content: string) => {
+    setEditingIndex(index);
+    setEditingText(content);
+    playSound('click');
+  };
+
+  // Batal Edit Pesan
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingText('');
+  };
+
+  // Simpan Edit Pesan & Minta Regenerasi Respons AI
+  const handleSaveEdit = async (index: number) => {
+    const trimmed = editingText.trim();
+    if (!trimmed || isLoading) return;
+
+    playSound('send');
+
+    // Pesan-pesan sebelum pesan yang diedit
+    const priorMessages = messages.slice(0, index);
+    const updatedUserMsg: ChatMessage = { role: 'user', content: trimmed };
+    const newMessages = [...priorMessages, updatedUserMsg];
+
+    // Potong sesi percakapan sampai pesan yang diedit
+    setSessions(prev =>
+      prev.map(s => (s.id === activeSession.id ? { ...s, messages: newMessages } : s))
+    );
+
+    setEditingIndex(null);
+    setEditingText('');
+    setIsLoading(true);
+
+    try {
+      const chatHistory = priorMessages.map(m => ({ role: m.role, content: m.content }));
+      const aiResponse = await getAIReflection(trimmed, chatHistory);
+      const modelMessage: ChatMessage = { role: 'model', content: aiResponse };
+
+      setSessions(prev =>
+        prev.map(s =>
+          s.id === activeSession.id ? { ...s, messages: [...newMessages, modelMessage] } : s
+        )
+      );
+      playSound('click');
+    } catch (error) {
+      setSessions(prev =>
+        prev.map(s =>
+          s.id === activeSession.id
+            ? { ...s, messages: [...newMessages, { role: 'model', content: t.coachError }] }
             : s
         )
       );
@@ -399,6 +459,42 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
                     >
                       {isAI ? (
                         <FormattedMessage text={msg.content} />
+                      ) : editingIndex === index ? (
+                        <div className="space-y-3 min-w-[240px] sm:min-w-[300px]">
+                          <textarea
+                            value={editingText}
+                            onChange={e => setEditingText(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSaveEdit(index);
+                              } else if (e.key === 'Escape') {
+                                handleCancelEdit();
+                              }
+                            }}
+                            autoFocus
+                            rows={3}
+                            className="w-full text-sm font-medium p-3 rounded-xl bg-emerald-700/80 text-white placeholder-emerald-200/60 border border-emerald-500/80 focus:outline-none focus:ring-2 focus:ring-white/40 resize-none"
+                            placeholder="Ketik perbaikan pesan..."
+                          />
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={handleCancelEdit}
+                              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all"
+                            >
+                              {t.coachCancelEdit || 'Batal'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSaveEdit(index)}
+                              disabled={!editingText.trim() || isLoading}
+                              className="px-3 py-1.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-black shadow-sm transition-all active:scale-95 disabled:opacity-50"
+                            >
+                              {t.coachSaveAndSubmit || 'Simpan & Kirim'}
+                            </button>
+                          </div>
+                        </div>
                       ) : (
                         <p className="text-sm md:text-base font-medium leading-relaxed whitespace-pre-wrap">
                           {msg.content}
@@ -406,8 +502,8 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
                       )}
                     </div>
 
-                    {/* Action Bar (Copy Button) */}
-                    {isAI && (
+                    {/* Action Bar (Copy / Edit) */}
+                    {isAI ? (
                       <div className="flex items-center gap-2 mt-1.5 ml-2 opacity-70 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleCopy(msg.content, index)}
@@ -421,6 +517,35 @@ export const RizqAIChat: React.FC<RizqAIChatProps> = ({ playSound, user }) => {
                           <span>{copiedIndex === index ? t.coachCopied : t.coachCopy}</span>
                         </button>
                       </div>
+                    ) : (
+                      editingIndex !== index && (
+                        <div className="flex items-center justify-end gap-2 mt-1.5 mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleStartEdit(index, msg.content)}
+                            disabled={isLoading}
+                            className="text-[11px] font-semibold text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors disabled:opacity-40"
+                            title={t.coachEdit || "Edit pesan"}
+                          >
+                            <Icon size={12}>
+                              <path d="M12 20h9" />
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </Icon>
+                            <span>{t.coachEdit || "Edit"}</span>
+                          </button>
+                          <span className="text-gray-300 dark:text-gray-700 text-xs">•</span>
+                          <button
+                            onClick={() => handleCopy(msg.content, index)}
+                            className="text-[11px] font-semibold text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors"
+                            title={t.coachCopy}
+                          >
+                            <Icon size={12}>
+                              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </Icon>
+                            <span>{copiedIndex === index ? t.coachCopied : t.coachCopy}</span>
+                          </button>
+                        </div>
+                      )
                     )}
                   </div>
 
